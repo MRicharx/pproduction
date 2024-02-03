@@ -1,13 +1,18 @@
 steps:
-# Build the container image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/poru-production/porudocker', '.']
-# Push the container image to Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/poru-production/porudocker']
-# Deploy container image to Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args: ['run', 'deploy', 'poru-production', '--image', 'gcr.io/poru-production/porudocker', '--region', 'REGION']
-images:
-- gcr.io/poru-production/porudocker
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/poru-production/porudocker', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/poru-production/porudocker']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'your-service-name'
+      - '--image=gcr.io/poru-production/porudocker'
+      - '--platform=managed'
+      - '--region=YOUR_REGION'
+
+options:
+  logging: CLOUD_LOGGING_ONLY  # or choose NONE if you don't want logs
