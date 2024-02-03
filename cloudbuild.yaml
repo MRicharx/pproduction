@@ -1,75 +1,13 @@
-apiVersion: serving.knative.dev/v1
-kind: Service
-metadata:
-  name: poru-production
-  namespace: '833435082536'
-  selfLink: /apis/serving.knative.dev/v1/namespaces/833435082536/services/poru-production
-  uid: 603df20c-c2fb-4f81-add9-3e8aa0bf4451
-  resourceVersion: AAYQd9Z754o
-  generation: 2
-  creationTimestamp: '2024-02-03T10:36:20.711054Z'
-  labels:
-    run.googleapis.com/satisfiesPzs: 'true'
-    cloud.googleapis.com/location: asia-southeast2
-  annotations:
-    run.googleapis.com/client-name: cloud-console
-    serving.knative.dev/creator: poru.production@gmail.com
-    serving.knative.dev/lastModifier: poru.production@gmail.com
-    run.googleapis.com/operation-id: 62ee4c64-bc42-4ae8-ab7d-5a7c577f5461
-    run.googleapis.com/ingress: all
-    run.googleapis.com/ingress-status: all
-spec:
-  template:
-    metadata:
-      labels:
-        client.knative.dev/nonce: 67de3a5d-2982-4152-a49b-f3569e8ac201
-        run.googleapis.com/startupProbeType: Default
-      annotations:
-        run.googleapis.com/client-name: cloud-console
-        autoscaling.knative.dev/minScale: '1'
-        autoscaling.knative.dev/maxScale: '10'
-        run.googleapis.com/startup-cpu-boost: 'true'
-    spec:
-      containerConcurrency: 80
-      timeoutSeconds: 300
-      serviceAccountName: 833435082536-compute@developer.gserviceaccount.com
-      containers:
-      - name: placeholder-1
-        image: gcr.io/cloudrun/placeholder
-        ports:
-        - name: http1
-          containerPort: 8080
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 512Mi
-        startupProbe:
-          timeoutSeconds: 240
-          periodSeconds: 240
-          failureThreshold: 1
-          tcpSocket:
-            port: 8080
-  traffic:
-  - percent: 100
-    latestRevision: true
-status:
-  observedGeneration: 2
-  conditions:
-  - type: Ready
-    status: 'True'
-    lastTransitionTime: '2024-02-03T10:39:05.861002Z'
-  - type: ConfigurationsReady
-    status: 'True'
-    lastTransitionTime: '2024-02-03T10:36:23.262874Z'
-  - type: RoutesReady
-    status: 'True'
-    lastTransitionTime: '2024-02-03T10:39:05.810776Z'
-  latestReadyRevisionName: poru-production-00002-cmk
-  latestCreatedRevisionName: poru-production-00002-cmk
-  traffic:
-  - revisionName: poru-production-00002-cmk
-    percent: 100
-    latestRevision: true
-  url: https://poru-production-zegfqek6bq-et.a.run.app
-  address:
-    url: https://poru-production-zegfqek6bq-et.a.run.app
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/poru-production/porudocker', '.']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/poru-production/porudocker']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'poru-production', '--image', 'gcr.io/poru-production/porudocker', '--region', 'REGION']
+images:
+- gcr.io/poru-production/porudocker
