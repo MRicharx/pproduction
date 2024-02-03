@@ -9,7 +9,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'your-service-name'
+      - 'poru-production'
       - '--image=gcr.io/poru-production/porudocker'
       - '--platform=managed'
       - '--region=YOUR_REGION'
